@@ -135,11 +135,6 @@ function getIcon (theme:any, iconType:any) {
           style={{color:'steelblue'}}  />
          {props.type=='like'&&count}
       </span>
-      
-      
-  
-
-  
 )
 
 }

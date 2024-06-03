@@ -50,7 +50,7 @@ export default function App() {
           <div> <Space> 
             <Link to={"/"} >
             <img
-              src="/src/assets/small_Coventry_University.png"
+              src="/src/assets/.png"
               alt="profile-img"
               className="profile-img-card"
             />

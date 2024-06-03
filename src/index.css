@@ -26,8 +26,6 @@ body {
   margin: 0;
   display: flex;
   place-items: left;
-  min-width: 1280px;
-  min-height: 120vh;
 }
 
 h1 {
