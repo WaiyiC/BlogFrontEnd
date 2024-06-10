@@ -1,4 +1,3 @@
-import 'antd/dist/reset.css';
 import React, { useState, useEffect } from 'react';
 import { Card, Col, Row, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -15,13 +14,9 @@ const PetShelter: React.FC = () => {
     const fetchDogs = async () => {
       console.log('Fetching dogs...');
       try {
-        const response = await api.get('api/v1/dogs');
+        const response = await api.get('/api/v1/dogs');
         console.log('API response:', response);
-        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-          setDogs(response.data);
-        } else {
-          console.log('No dogs found in the response');
-        }
+        setDogs(response.data);
       } catch (error) {
         console.error('Error fetching dogs:', error);
       } finally {
@@ -40,7 +35,7 @@ const PetShelter: React.FC = () => {
   }
 
   if (!dogs.length) {
-    console.log('No dogs available to display');
+    console.log('No dogs found');
     return (<div>There are no dogs available now.</div>);
   }
 

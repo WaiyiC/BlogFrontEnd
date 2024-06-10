@@ -15,7 +15,7 @@ const Article = () => {
   const [articles, setArticles] = React.useState(null);  
   const [loading, setLoading] = React.useState(true);    
   React.useEffect(()=>{
-    axios.get(`${api.uri}/Articles`)
+    axios.get(`${api.uri}/articles`)
       .then((res)=>{
         setArticles(res.data);   
         localStorage.setItem('a',JSON.stringify(res.data))                        
