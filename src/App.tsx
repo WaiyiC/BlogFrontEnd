@@ -15,6 +15,7 @@ import About from './components/About';
 import DetailArticle from './components/DetailArticle';
 import Profile from './components/Profile';
 import FavPage from './components/favpage';
+import PetShelter from './components/PetShelter';
 import { LogoutOutlined, HomeOutlined,DashboardOutlined,InfoCircleOutlined,HeartFilled } from '@ant-design/icons';
 import Copyright from './components/Copyright';
 
@@ -58,7 +59,8 @@ export default function App() {
           <Link to="/"><HomeOutlined style={{ fontSize: '32px', }} /></Link>
             <Link to="/dashboard"><DashboardOutlined style={{ fontSize: '32px', }}/></Link>
           <Link to="/about"><InfoCircleOutlined style={{ fontSize: '32px', }}/></Link>
-          
+            <Link to="/petshelter"><InfoCircleOutlined style={{ fontSize: '32px', }}/></Link>
+           
           </Space></div>
         </nav>
            
@@ -89,12 +91,14 @@ export default function App() {
           <Route path="/:aid" element = {<DetailArticle /> } />            
           <Route path="/profile" element={<Profile />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/favpage" element={<FavPage />} />	
+          <Route path="/favpage" element={<FavPage />} />	          <Route path="/PetShelter" element={<PetShelter />} />	
+
+          
         </Routes>
       </Content>
       <Footer>
         <Copyright /><img
-              src="/src/assets/SHAPE_logo.png"
+              src="/src/assets/LOGO.png"
               alt="profile-img"
               className="profile-img-card"
               style={{float:'right'}}
