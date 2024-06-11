@@ -27,8 +27,7 @@ const Register: React.FC = () => {
         
         window.alert(`Welcome ${username} pls login to access your account profile`)
         console.log(response.data);
-        navigate("/");
-        window.location.reload();
+        
       })
       .catch((error) => {
                  window.alert(`Sorry ${username} Something wrong with your registration! Pls try again with another username`)

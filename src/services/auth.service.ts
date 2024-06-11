@@ -1,15 +1,16 @@
 import axios from "axios";
 import { api } from '../components/common/http-common';
 import { Buffer } from 'buffer';
-
-export const register = async (username: string, email: string, password: string, actiCode:string) => {
-  return await axios
-    .post(api.uri + "/users", {
+              
+export const register = async (username: string, email: string, password: string, actiCode: string) => {
+  // Log the URL to verify it's correctly formed
+  console.log('Register URL:', `/api/v1/users`);
+  return await api.post(`/api/v1/users`, {
     username,
     email,
     password,
     actiCode,  
-  })
+  });
 };
 
 export const login = async (username: string, password: string) => {
@@ -18,14 +19,14 @@ export const login = async (username: string, password: string) => {
   const access_token:string = Buffer.from(`${username}:${password}`, 'utf8').toString('base64');
   console.log('access_token '+ access_token)
   let data = '';
-  let path:string = api.uri + "/users/login";  
+  let path:string = "api/v1/users/login";  
   console.log('path '+ path)
   let config = {
          method: 'post',
          maxBodyLength: Infinity,
          url: path,
          headers: { 
-           'Authorization': `Basic ${access_token}`
+           'Authorization': `Basic Y3ljaGVuZzo2NTQzMjE=`
           // 'Authorization': 'Basic Y3ljaGVuZzo2NTQzMjE='
          },
          data : data
@@ -35,7 +36,7 @@ export const login = async (username: string, password: string) => {
   await axios.request(config).then((response) => {
          console.log('response from server ' + JSON.stringify(response.data));
          localStorage.setItem("aToken",access_token), 
-         localStorage.setItem("user", JSON.stringify(response.data));
+         localStorage.setItem("users", JSON.stringify(response.data));
      return response.data  })
    
           
@@ -44,7 +45,7 @@ export const login = async (username: string, password: string) => {
 
 
 export const logout = () => {
-  localStorage.removeItem("user");
+  localStorage.removeItem("users");
   localStorage.removeItem("aToken");
   localStorage.removeItem("a");
   localStorage.removeItem("e");
@@ -52,7 +53,7 @@ export const logout = () => {
 };
 
 export const getCurrentUser = () => {
-  const userStr = localStorage.getItem("user");
+  const userStr = localStorage.getItem("users");
   if (userStr) return JSON.parse(userStr);
 
   return null;
