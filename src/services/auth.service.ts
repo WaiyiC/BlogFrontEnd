@@ -55,7 +55,7 @@ try {
 };
 
 export const logout = () => {
-  localStorage.removeItem("users");
+  localStorage.removeItem("user");
   localStorage.removeItem("aToken");
   localStorage.removeItem("a");
   localStorage.removeItem("e");
