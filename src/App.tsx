@@ -58,7 +58,7 @@ export default function App() {
             </Link>   
           <Link to="/"><HomeOutlined style={{ fontSize: '32px', }} /></Link>
             <Link to="/dashboard"><DashboardOutlined style={{ fontSize: '32px', }}/></Link>
-          <Link to="/about"><InfoCircleOutlined style={{ fontSize: '32px', }}/></Link>
+        
             <Link to="/petshelter"><InfoCircleOutlined style={{ fontSize: '32px', }}/></Link>
            
           </Space></div>
@@ -76,7 +76,7 @@ export default function App() {
                </Space></div>
             ) : (
               <div><Space> 
-                <Login />
+                <Link to="/login">Login</Link> 
                 <Link to="/register">Register</Link> 
               </Space></div>
             )}              
@@ -90,8 +90,10 @@ export default function App() {
           <Route path="/about" element={<About />}  />
           <Route path="/:aid" element = {<DetailArticle /> } />            
           <Route path="/profile" element={<Profile />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/favpage" element={<FavPage />} />	          <Route path="/PetShelter" element={<PetShelter />} />	
+          <Route path="/register" element={<Register />} />          
+          <Route path="/login" element={<Login />} />
+          <Route path="/favpage" element={<FavPage />} />	          
+          <Route path="/PetShelter" element={<PetShelter />} />	
 
           
         </Routes>

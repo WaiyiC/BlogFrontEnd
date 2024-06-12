@@ -41,11 +41,7 @@ console.log('current user' + JSON.stringify(currentUser))
          <th align="left" style={{background:"#f4ffb8"}}>About me:  </th>
          <td style={{background:"#f4ffb8"}}>{currentUser.about}</td>
          </tr>  
-        <tr> 
-          <th align="left" style={{background:"#d3f261"}} >Avatar:  </th>
-          <td style={{background:"#d3f261"}}><Avatar style={{ backgroundColor: '#87d068' }} icon={<UserOutlined />} />
-  {currentUser.avatarurl}</td>
-        </tr>    
+        
          <tr> 
           <th align="left" style={{background:"#f4ffb8"}} >Role: </th>
          <td style={{background:"#f4ffb8"}}>{currentUser.role}</td>

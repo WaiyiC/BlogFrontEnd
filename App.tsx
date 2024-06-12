@@ -39,7 +39,7 @@ export default function App() {
 
   const logOut = () => {
     AuthService.logout();
-    setCurrentUser(undefined);
+    setCurrentUser(null);
   };
 
   return (

@@ -15,9 +15,7 @@ const Register: React.FC = () => {
     password: "",
     role: "user" ,
     actiCode:"",
-  };
-
-  
+  };  
 
   const handleRegister =  (values: UserT) => {
     const { username, email, password,actiCode } = values;
