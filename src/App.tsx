@@ -15,7 +15,9 @@ import About from './components/About';
 import DetailArticle from './components/DetailArticle';
 import Profile from './components/Profile';
 import FavPage from './components/favpage';
-import PetShelter from './components/PetShelter';
+import DogList from './components/DogList';
+import AddDog from './components/AddDog';
+
 import { LogoutOutlined, HomeOutlined,DashboardOutlined,InfoCircleOutlined,HeartFilled } from '@ant-design/icons';
 import Copyright from './components/Copyright';
 
@@ -59,7 +61,7 @@ export default function App() {
           <Link to="/"><HomeOutlined style={{ fontSize: '32px', }} /></Link>
             <Link to="/dashboard"><DashboardOutlined style={{ fontSize: '32px', }}/></Link>
         
-            <Link to="/petshelter"><InfoCircleOutlined style={{ fontSize: '32px', }}/></Link>
+            <Link to="/DogList"><InfoCircleOutlined style={{ fontSize: '32px', }}/></Link>
            
           </Space></div>
         </nav>
@@ -93,8 +95,8 @@ export default function App() {
           <Route path="/register" element={<Register />} />          
           <Route path="/login" element={<Login />} />
           <Route path="/favpage" element={<FavPage />} />	          
-          <Route path="/PetShelter" element={<PetShelter />} />	
-
+          <Route path="/DogList" element={<DogList />} />	
+          <Route path="/AddDog" element={<AddDog />} />
           
         </Routes>
       </Content>

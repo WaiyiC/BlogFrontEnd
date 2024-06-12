@@ -69,7 +69,8 @@ export default function App() {
                   <Link to={"/profile"} >
                     {currentUser.username }
                   </Link>  
-                  <Link to="/favpage"><HeartFilled style={{ fontSize: '32px', }}/></Link>                           
+                  <Link to="/favpage"><HeartFilled style={{ fontSize: '25px', }}/></Link>          
+                {user && user.role === 'admin' && <Link to="/shelter">Shelter Admin</Link>}                 
                   <a href="/" className="nav-link" onClick={logOut}> <LogoutOutlined style={{ fontSize: '32px', }} /></a>               
                </Space></div>
             ) : (

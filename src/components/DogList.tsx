@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Col, Row, Spin } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import api from './common/http-common';
 import PostIcon from './posticon';
 import EditForm from './EditForm';
 import { getCurrentUser } from '../services/auth.service';
 
-const PetShelter: React.FC = () => {
+const DogList: React.FC = () => {
   const [dogs, setDogs] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -42,6 +43,7 @@ const PetShelter: React.FC = () => {
   console.log('Rendering dogs:', dogs);
   return (
     <Row gutter={[16, 16]} style={{ marginLeft: "15px" }}>
+      <Link to="/AddDog"><PlusOutlined style={{ fontSize: '25px', }}/></Link>
       {dogs.map(({ id, name, breed, age, description, imageurl, ownerid }) => (
         <Col key={id}>
           <Card title={name} style={{ width: 300 }}
@@ -62,4 +64,4 @@ const PetShelter: React.FC = () => {
   );
 };
 
-export default PetShelter;
+export default DogList;

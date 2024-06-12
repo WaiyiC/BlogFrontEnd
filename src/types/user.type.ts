@@ -4,5 +4,5 @@ export default interface UserT {
   email: string,
   password: string,
   role: string,
-  actiCode:string
+  acticode: string
 }

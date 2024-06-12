@@ -19,8 +19,8 @@ const [loading, setLoading] = React.useState(true);
 const [theme, setTheme] = React.useState('outlined');
 
 React.useEffect(() => {
-  console.log(`path: ${api.uri}/articles/${aid}`)
-    axios.get(`${api.uri}/articles/${aid}`)
+  console.log(`path: api/v1/articles/${aid}`)
+    axios.get(`api/v1/articles/${aid}`)
       .then((res) => {
       //  console.log('article' ,article)
         setArticle(res.data);
@@ -51,7 +51,7 @@ React.useEffect(() => {
     setTheme('filled')
 // console.log('fav link arr ', fav.links.fav)
 // console.log('fav link ', fav)
-  axios.delete(`${api.uri}/articles/${aid}`, {
+  axios.delete(`api/v1/articles/${aid}`, {
        
         headers: {
             "Authorization": `Basic ${localStorage.getItem('aToken')}`

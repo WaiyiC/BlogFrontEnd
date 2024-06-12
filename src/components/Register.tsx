@@ -7,38 +7,36 @@ import { register } from "../services/auth.service";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
 const Register: React.FC = () => {
-  
+
   let navigate: NavigateFunction = useNavigate();
   const initialValues: UserT = {
     username: "",
     email: "",
     password: "",
     role: "user" ,
-    actiCode:"",
+    acticode:"",
   };  
 
   const handleRegister =  (values: UserT) => {
-    const { username, email, password,actiCode } = values;
+    const { username, email, password,acticode } = values;
 
-   register(username, email, password,actiCode).then(
+   register(username, email, password,acticode).then(
       (response) => {
-        
+
         window.alert(`Welcome ${username} pls login to access your account profile`)
         console.log(response.data);
-        
+
       })
       .catch((error) => {
                  window.alert(`Sorry ${username} Something wrong with your registration! Pls try again with another username`)
          console.log(error.toString());
-      
-        navigate("/register");
-        window.location.reload();
+
       }
     );
   };
 
   return (
-    
+
          <>
            <h3> <strong>Welcome to Blog Registration</strong></h3>
              <Form style={{margin: "5px",width:"900px"}} 
@@ -71,7 +69,7 @@ label="Username"
                    ]} >
                  <Input  placeholder="emails" />
                  </Form.Item>
-                 
+
                  <Form.Item
                    name="password"
 label= "Password"                 
@@ -109,9 +107,9 @@ label= "Confirm Password"
                    <Input.Password  placeholder="Confirm Password"/>
                  </Form.Item>
                 <Form.Item
-                 name="actiCode" 
+                 name="acticode" 
  label= "Activation Code"                 
-                  
+
                >
                  <Input.Password
                    prefix={<LockOutlined className="site-form-item-icon" />}
@@ -119,18 +117,18 @@ label= "Confirm Password"
                    placeholder="secret code for internal staff(optional)"
                  />
                </Form.Item>
-              
+
                <Form.Item>
                  <Button type="primary" htmlType="submit" className="login-form-button">
                    Register
                  </Button>
-                 
-               </Form.Item>
-   
 
-            
+               </Form.Item>
+
+
+
           </Form>
-         
+
          </>
   );
 };
