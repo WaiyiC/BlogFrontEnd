@@ -69,16 +69,4 @@ export const getCurrentUser = () => {
   return null;
 };
 
-const adminKeys = [
-  'mongkok_123456789',
-  'mongkok_987654321',
-  'shatin_123456789',
-  'shatin_987654321',
-  'chaiwan_123456789',
-  'chaiwan_987654321'
-];
 
-export const isAdmin = () => {
-  const user = getCurrentUser();
-  return user && adminKeys.includes(user.key);
-};

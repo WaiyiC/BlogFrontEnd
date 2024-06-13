@@ -42,6 +42,47 @@ export const addDog = async (name: string, breed: string, age: number, descripti
   }
 };
 
+export const likeDogs = async (id: number, userid: number) => {
+  try {
+    const dog = await getDogById(id);
+    const response = await api.post(`${API_URL}/${id}/likes`, { userid }, { headers: authHeader() });
+    return response.data; // Assuming server responds with a meaningful success message or data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      handleAxiosError(error);
+      // Optionally handle and re-throw the error to propagate it further
+      throw error;
+    } else {
+      console.error('Unknown error:', error);
+      // Handle other types of errors (not AxiosError) if needed
+      throw error;
+    }
+  }
+};
+
+export const dislikeDogs = async (id: number, userid: number) => {
+  try {
+    const response = await api.delete(`/api/v1/dogs/${id}/likes`, {
+      headers: {
+        'Authorization': `Basic ${btoa('ashi:111111')}`, // Replace with actual username and password
+      }
+    });
+    return response.data;
+      } catch (error) {
+        throw error;
+      }
+    };
+
+export const checkUserLiked = async (userid: number): Promise<number[]> => {
+  try {
+    const response = await api.get(`/api/v1/users/${userid}/likedDogs`);
+    return response.data.likedDogs; // Assuming your API returns an array of dog IDs liked by the user
+  } catch (error) {
+    console.error('Error fetching user liked dogs:', error);
+    return []; // Return empty array or handle error as per your application's requirement
+  }
+};
+
 const handleAxiosError = (error: AxiosError) => {
   if (error.response) {
     // The request was made and the server responded with a status code
@@ -81,6 +122,23 @@ export const getDogById = async (id: number) => {
   }
 };
 
+export const getLikeById = async (id: number) => {
+  try {
+    const response = await api.get(API_URL , {id}, { headers: authHeader() });
+
+    console.log(response)
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      handleAxiosError(error);
+      throw error;
+    } else {
+      console.error('Unknown error:', error);
+      throw error;
+    }
+  }
+};
+
 export const deleteDog = async (id: number) => {
   try {
     // Fetch the dog by its ID first
@@ -88,7 +146,7 @@ export const deleteDog = async (id: number) => {
     console.log('Dog to delete:', dog);
 
     // Now perform the delete operation
-    const response = await axios.delete(`${API_URL}/${id}`, {
+    const response = await api.delete(`${API_URL}/${id}`, {
       headers: authHeader()
     });
 

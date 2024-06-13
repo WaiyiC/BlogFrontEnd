@@ -53,7 +53,7 @@ import { api } from '../components/common/http-common';
         (response) => {
 
           window.alert("success")
-          console.log(response.data);
+          window.location.reload();
 
         })
         .catch((error) => {
