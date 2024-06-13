@@ -1,5 +1,5 @@
   import React, { useState, useEffect } from 'react';
-  import { Card, Col, Row, Spin, Button, Modal, Form, Input, message } from 'antd';
+  import { Card, Col, Row, Spin, Button, Modal, Form, Input, message, Upload } from 'antd';
   import { LoadingOutlined } from '@ant-design/icons';
   import axios from 'axios';
   import { getCurrentUser } from "../services/auth.service";
@@ -15,19 +15,20 @@ import { api } from '../components/common/http-common';
     const [currentDog, setCurrentDog] = useState<any>(null);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [currentUser, setCurrentUser] = useState<any>(null);
+    
     const API_URL = 'https://a9cae81d-c094-4635-9860-14e886ff26fe-00-1n32cs1xece6w.pike.replit.dev:3000/api/v1/dogs';
     const token = localStorage.getItem("token");
 
     useEffect(() => {
       const user = getCurrentUser();
-      if (user) {
+      if (user && user.role === 'admin') {
         setCurrentUser(user);
         fetchDogs();
       } else {
-        console.log('User not logged in');
-        // Handle user not logged in scenario (e.g., redirect to login page)
+        alert("You do not have access to this page.");
+        window.location.href = '/login'
       }
-    }, []);
+      }, []);
 
     const fetchDogs = async () => {
       setLoading(true);
@@ -94,22 +95,6 @@ import { api } from '../components/common/http-common';
       }
     };
     
-    // const handleDeleteDog = async (id: number) => {
-    //   try {
-    //     await axios.delete(API_URL,'/${id}`, {
-    //       headers: {
-    //         'Authorization': `Bearer ${token}`,
-    //       },
-    //     });
-    //     message.success('Dog deleted successfully');
-    //     fetchDogs();
-    //   } catch (error) {
-    //     console.error('Error deleting dog:', error);
-    //     message.error('Failed to delete dog');
-    //   }
-    // };
-
-    
     const showModal = (dog: any = null) => {
       setCurrentDog(dog);
       setIsEditing(!!dog);
@@ -128,7 +113,23 @@ import { api } from '../components/common/http-common';
                   extra={
                     <>
                       <Button type="primary" onClick={() => showModal(dog)}>Edit</Button>
-                      <Button type="danger" onClick={() => handleDeleteDog(dog.id)}>Delete</Button>
+                      <Button
+                        type="danger"
+                        onClick={() => {
+                          // Show confirmation alert before deleting
+                          Modal.confirm({
+                            title: 'Confirm Deletion',
+                            content: 'Are you sure you want to delete this dog?',
+                            okText: 'Yes, delete this dog!',
+                              cancelText: 'No',
+                            onOk() {
+                              handleDeleteDog(dog.id);
+                            },
+                          });
+                        }}
+                      >
+                        Delete
+                      </Button>
                     </>
                   }
                 >

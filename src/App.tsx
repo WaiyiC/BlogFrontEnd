@@ -1,6 +1,6 @@
 //import './App.css';
 import 'antd/dist/reset.css';
-import { Layout, Space,Col, FloatButton} from 'antd';
+import { Layout, Space, Button, Typography } from 'antd';
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 //import Landing from "./components/Landing"
@@ -18,106 +18,114 @@ import FavPage from './components/favpage';
 import DogList from './components/DogList';
 import AddDog from './components/AddDog';
 import ManageDog from './components/manageDog';
+import { LogoutOutlined, HomeOutlined, DashboardOutlined, InfoCircleOutlined, HeartFilled } from '@ant-design/icons';
 
-
-import { LogoutOutlined, HomeOutlined,DashboardOutlined,InfoCircleOutlined,HeartFilled } from '@ant-design/icons';
-import Copyright from './components/Copyright';
 
 const { Header, Content, Footer } = Layout;
+const { Title } = Typography;
 
-export default function App() {
+const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<UserT | undefined>(undefined);
 
   useEffect(() => {
     const user = AuthService.getCurrentUser();
-    
+
     if (user) {
       setCurrentUser(user);
     }
 
-    EventBus.on("logout", logOut);
+    EventBus.on("logout", handleLogout);
 
     return () => {
-      EventBus.remove("logout", logOut);
+      EventBus.remove("logout", handleLogout);
     };
   }, []);
 
-  const logOut = () => {
+  const handleLogout = () => {
     AuthService.logout();
     setCurrentUser(undefined);
+    return <Navigate to="/" />;
+  };
+  const handleLogin = async (username: string, password: string) => {
+    try {
+      const response = await AuthService.login(username, password);
+      if (response) {
+        localStorage.setItem("user", JSON.stringify(response.user));
+        setCurrentUser(response.user);
+        // Navigate to the profile or dashboard page
+        navigate('/profile');
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      // Handle login failure
+    }
   };
 
   return (
     <Router>
       <Layout>
-      <Header>              
-        <nav style={{float:'left'}}>  
-          <div> <Space> 
-            <Link to={"/"} >
-            <img
-              src="/src/assets/.png"
-              alt="profile-img"
-              className="profile-img-card"
-            />
-            </Link>   
-          <Link to="/"><HomeOutlined style={{ fontSize: '32px', }} /></Link>
-            <Link to="/dashboard"><DashboardOutlined style={{ fontSize: '32px', }}/></Link>
-        
-            <Link to="/DogList"><InfoCircleOutlined style={{ fontSize: '32px', }}/></Link>
-           
-          </Space></div>
-        </nav>
-           
-        <nav style={{float:'right'}}>
-            {currentUser ? (
-              <div>  <Space>   
-                  
-                  <Link to={"/profile"} >
-                    {currentUser.username }
-                  </Link>  
-                {currentUser.role === 'admin' && (
-                  <Link to={"/manageDog"}>
-                    <button>Manage Dogs</button>
+        <Header>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <Space>
+                <Link to="/" >
+                  <HomeOutlined style={{ fontSize: '32px' }} />
+                </Link>
+                <Link to="/dashboard">
+                  <DashboardOutlined style={{ fontSize: '32px' }} />
+                </Link>
+                <Link to="/doglist">
+                  <InfoCircleOutlined style={{ fontSize: '32px' }} />
+                </Link>
+              </Space>
+            </div>
+            <div>
+              {currentUser ? (
+                <Space>
+                  <Link to="/profile">
+                    <Title level={5} style={{ color: "#135200" }}>{currentUser.username}</Title>
                   </Link>
-                )} 
-                  <Link to="/favpage"><HeartFilled style={{ fontSize: '32px', }}/></Link>                           
-                  <a href="/" className="nav-link" onClick={logOut}> <LogoutOutlined style={{ fontSize: '32px', }} /></a>               
-               </Space></div>
-            ) : (
-              <div><Space> 
-                <Link to="/login">Login</Link> 
-                <Link to="/register">Register</Link> 
-              </Space></div>
-            )}              
-        </nav>
+                  {currentUser.role === 'admin' && (
+                    <Link to="/managedog">
+                      <Button type="primary">Manage Dogs</Button>
+                    </Link>
+                  )}
+                  <Link to="/favpage">
+                    <HeartFilled style={{ fontSize: '32px' }} />
+                  </Link>
+                  <Button onClick={handleLogout} type="primary">
+                    <LogoutOutlined style={{ fontSize: '32px' }} />
+                    <Link to="/login">Login</Link>
+                  </Button>
+                </Space>
+              ) : (
+                <Space>
+                  <Link to="/login">Login</Link>
+                  <Link to="/register">Register</Link>
+                </Space>
+              )}
+            </div>
+          </div>
+        </Header>
         
-      </Header>
-      <Content>
-        <Routes>
-          <Route index element={ <Home /> } />
-          <Route path="/dashboard" element={<Dashboard />}  />  
-          <Route path="/about" element={<About />}  />        
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/register" element={<Register />} />          
-          <Route path="/login" element={<Login />} />
-          <Route path="/favpage" element={<FavPage />} />	          
-          <Route path="/DogList" element={<DogList />} />	
-          <Route path="/AddDog" element={<AddDog />} />
-          <Route path="/manageDog" element={<ManageDog />} />
-
-          
-        </Routes>
-      </Content>
-      <Footer>
-        <Copyright /><img
-              src="/src/assets/LOGO.png"
-              alt="profile-img"
-              className="profile-img-card"
-              style={{float:'right'}}
-            />
-      </Footer>
-      <FloatButton.BackTop  />
+        <Content>
+          <Routes>
+            <Route index element={<Home />} />
+            <Route path="/dashboard" element={<Dashboard />}  />  
+            <Route path="/about" element={<About />}  />        
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/register" element={<Register />} />          
+            <Route path="/login" element={<Login />} />
+            <Route path="/favpage" element={<FavPage />} />	          
+            <Route path="/DogList" element={<DogList />} />	
+            <Route path="/AddDog" element={<AddDog />} />
+            <Route path="/manageDog" element={<ManageDog />} />
+          </Routes>
+        </Content>
+        <Footer style={{ textAlign: 'center' }}>Footer content</Footer>
       </Layout>
     </Router>
-  )
-}
+  );
+};
+
+export default App;

@@ -25,6 +25,7 @@ const Login: React.FC = () => {
         localStorage.getItem("token");
         console.log(localStorage.getItem("token"));
         navigate("/profile");
+        window.location.reload();
       }
     } catch (error) {
       console.error('Login failed:', error);

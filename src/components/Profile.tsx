@@ -1,5 +1,5 @@
 import 'antd/dist/reset.css';
-import React from "react";
+import React, { useState } from "react";
 import { getCurrentUser } from "../services/auth.service";
 import SearchUser from './userSearch'
 import ImageUpload from './ImageUpload'
@@ -12,6 +12,13 @@ import EditForm from "./EditForm";
 const Profile: React.FC = () => {
  
   const currentUser = getCurrentUser();
+  const [showUploadHeader, setShowUploadHeader] = useState<boolean>(false);
+
+  // Function to toggle the upload header visibility
+  const toggleUploadHeader = () => {
+    setShowUploadHeader(!showUploadHeader);
+  };
+
 console.log('current user' + JSON.stringify(currentUser))
    console.log(localStorage.getItem("token"));
   return (
