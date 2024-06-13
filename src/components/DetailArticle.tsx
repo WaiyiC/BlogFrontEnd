@@ -19,8 +19,8 @@ const [loading, setLoading] = React.useState(true);
 const [theme, setTheme] = React.useState('outlined');
 
 React.useEffect(() => {
-  console.log(`path: api/v1/articles/${aid}`)
-    axios.get(`api/v1/articles/${aid}`)
+  console.log(`path: api/v1/${aid}`)
+    axios.get(`api/v1/${aid}`)
       .then((res) => {
       //  console.log('article' ,article)
         setArticle(res.data);

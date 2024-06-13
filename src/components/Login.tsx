@@ -22,7 +22,8 @@ const Login: React.FC = () => {
       const response = await login(username, password);
       if (response) {
         localStorage.setItem("user", JSON.stringify(response.user));
-        localStorage.setItem("token", response.token);
+        localStorage.getItem("token");
+        console.log(localStorage.getItem("token"));
         navigate("/profile");
       }
     } catch (error) {

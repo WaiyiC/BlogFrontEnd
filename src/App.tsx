@@ -17,6 +17,8 @@ import Profile from './components/Profile';
 import FavPage from './components/favpage';
 import DogList from './components/DogList';
 import AddDog from './components/AddDog';
+import ManageDog from './components/manageDog';
+
 
 import { LogoutOutlined, HomeOutlined,DashboardOutlined,InfoCircleOutlined,HeartFilled } from '@ant-design/icons';
 import Copyright from './components/Copyright';
@@ -73,6 +75,11 @@ export default function App() {
                   <Link to={"/profile"} >
                     {currentUser.username }
                   </Link>  
+                {currentUser.role === 'admin' && (
+                  <Link to={"/manageDog"}>
+                    <button>Manage Dogs</button>
+                  </Link>
+                )} 
                   <Link to="/favpage"><HeartFilled style={{ fontSize: '32px', }}/></Link>                           
                   <a href="/" className="nav-link" onClick={logOut}> <LogoutOutlined style={{ fontSize: '32px', }} /></a>               
                </Space></div>
@@ -89,14 +96,15 @@ export default function App() {
         <Routes>
           <Route index element={ <Home /> } />
           <Route path="/dashboard" element={<Dashboard />}  />  
-          <Route path="/about" element={<About />}  />
-          <Route path="/:aid" element = {<DetailArticle /> } />            
+          <Route path="/about" element={<About />}  />        
           <Route path="/profile" element={<Profile />} />
           <Route path="/register" element={<Register />} />          
           <Route path="/login" element={<Login />} />
           <Route path="/favpage" element={<FavPage />} />	          
           <Route path="/DogList" element={<DogList />} />	
           <Route path="/AddDog" element={<AddDog />} />
+          <Route path="/manageDog" element={<ManageDog />} />
+
           
         </Routes>
       </Content>

@@ -2,7 +2,7 @@ export default interface DogT {
   id?: any | null,
   name: string,
   breed: string,
-  age: string,
+  age: number,
     description: string,
     imageurl:string
 }

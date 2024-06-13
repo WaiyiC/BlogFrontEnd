@@ -13,6 +13,7 @@ const Profile: React.FC = () => {
  
   const currentUser = getCurrentUser();
 console.log('current user' + JSON.stringify(currentUser))
+   console.log(localStorage.getItem("token"));
   return (
     <>
      <p></p>
@@ -48,7 +49,7 @@ console.log('current user' + JSON.stringify(currentUser))
         </tr>
         <tr> 
          <th align="left" style={{background:"#f4ffb8"}}>Login token:  </th>
-         <td style={{background:"#f4ffb8"}}>{localStorage.getItem('aToken')?.substring(0, 20)}</td>
+         <td style={{background:"#f4ffb8"}}>{localStorage.getItem("token")}</td>
          </tr>  </table>
     </div></Col>
     <Col span={12}>
