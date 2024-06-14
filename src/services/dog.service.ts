@@ -42,6 +42,27 @@ export const addDog = async (name: string, breed: string, age: number, descripti
   }
 };
 
+export const searchDogsByBreed = async (breed: string) => {
+  try {
+    const response = await axios.get(`${API_URL}/breed/${breed}`, { headers: authHeader() });
+    return response.data;
+  } catch (error) {
+    console.error('Error searching dogs by breed:', error);
+    throw error;
+  }
+};
+
+// Function to search dogs by age
+export const searchDogsByAge = async (age: number) => {
+  try {
+    const response = await axios.get(`${API_URL}/age/${age}`, { headers: authHeader() });
+    return response.data;
+  } catch (error) {
+    console.error('Error searching dogs by age:', error);
+    throw error;
+  }
+};
+
 export const likeDogs = async (id: number, userid: number) => {
   try {
     const dog = await getDogById(id);
@@ -70,6 +91,23 @@ export const dislikeDogs = async (id: number, userid: number) => {
       }
     };
 
+export const commentDogs = async (id: number, userid: number) => {
+  try {
+    const dog = await getDogById(id);
+    const response = await api.post(`/${id}/comment`, { comment }, { headers: authHeader() });
+    return response.data; // Assuming server responds with a meaningful success message or data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      handleAxiosError(error);
+      // Optionally handle and re-throw the error to propagate it further
+      throw error;
+    } else {
+      console.error('Unknown error:', error);
+      // Handle other types of errors (not AxiosError) if needed
+      throw error;
+    }
+  }
+};
 
 const handleAxiosError = (error: AxiosError) => {
   if (error.response) {
