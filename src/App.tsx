@@ -12,11 +12,12 @@ import EventBus from "./components/common/EventBus";
 import Home from './components/Home';
 import Dashboard from './components/Dashboard';
 import About from './components/About';
-import DetailArticle from './components/DetailArticle';
 import Profile from './components/Profile';
 import FavPage from './components/favpage';
 import DogList from './components/DogList';
 import AddDog from './components/AddDog';
+import DogDetail from './components/DetailDog';
+
 import ManageDog from './components/manageDog';
 import { LogoutOutlined, HomeOutlined, DashboardOutlined, InfoCircleOutlined, HeartFilled } from '@ant-design/icons';
 
@@ -109,7 +110,7 @@ const App: React.FC = () => {
         </Header>
         
         <Content>
-          <Routes>
+          <Routes>             
             <Route index element={<Home />} />
             <Route path="/dashboard" element={<Dashboard />}  />  
             <Route path="/about" element={<About />}  />        
@@ -117,7 +118,8 @@ const App: React.FC = () => {
             <Route path="/register" element={<Register />} />          
             <Route path="/login" element={<Login />} />
             <Route path="/favpage" element={<FavPage />} />	          
-            <Route path="/DogList" element={<DogList />} />	
+              <Route path="/dogList" element={<DogList />} />
+              <Route path="/dogList/:id" element={<DogDetail />} />
             <Route path="/AddDog" element={<AddDog />} />
             <Route path="/manageDog" element={<ManageDog />} />
           </Routes>

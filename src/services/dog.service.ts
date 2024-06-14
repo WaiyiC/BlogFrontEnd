@@ -91,10 +91,10 @@ export const dislikeDogs = async (id: number, userid: number) => {
       }
     };
 
-export const commentDogs = async (id: number, userid: number) => {
+export const commentDogs = async (id: number, userid: number, messagetxt: string) => {
   try {
-    const dog = await getDogById(id);
-    const response = await api.post(`/${id}/comment`, { comment }, { headers: authHeader() });
+    console.log(id, userid, messagetxt);
+    const response = await api.post(`/api/v1/dogs/${id}/comment`, { userid,messagetxt }, { headers: authHeader() });
     return response.data; // Assuming server responds with a meaningful success message or data
   } catch (error) {
     if (axios.isAxiosError(error)) {
