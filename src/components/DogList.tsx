@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Col, Row, Spin, Tooltip, Modal, Form, Input, Button, message } from 'antd';
-import { LoadingOutlined, PlusOutlined, HeartOutlined, HeartFilled, MessageOutlined } from '@ant-design/icons';
-import LikeT from "../types/likes.type";
-import { BrowserRouter as Router, Link } from 'react-router-dom';
-import api from './common/http-common';
-import PostIcon from './posticon';
-import EditForm from './EditForm';
+import { Card, Col, Row, Spin, Tooltip, Modal, Form, Input, Button, message, Typography, Select, Table } from 'antd'; // Import Table and Select
+import { LoadingOutlined, HeartOutlined, HeartFilled, MessageOutlined } from '@ant-design/icons';
 import { getCurrentUser } from '../services/auth.service';
-import { likeDogs,dislikeDogs, checkUserLiked  } from "../services/dog.service";
-import { getDogById } from "../services/dog.service";
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import { likeDogs, dislikeDogs } from "../services/dog.service";
+import EditForm from './EditForm';
+import api from './common/http-common';
+import { NavigateFunction, useNavigate } from 'react-router-dom';
+
+
+const { Column } = Table;
+const { Search } = Input;
+const { Title } = Typography;
+const { Option } = Select;
 
 const DogList: React.FC = () => {
   const [dogs, setDogs] = useState<any[]>([]);
@@ -20,54 +21,51 @@ const DogList: React.FC = () => {
   const [commentedDogId, setCommentedDogId] = useState<number | null>(null);
   const [userLikedDogs, setUserLikedDogs] = useState<number[]>([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const token = localStorage.getItem("token");
-  const { id: dogid } = useParams();
+  const [searchType, setSearchType] = useState<string>("all");
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [isSearchOK, setSearchOK] = useState<boolean>(false);
+  const [dogsData, setSearchedDogs] = useState<any[]>([]);
+  const [press, setPress] = useState<string>("");
 
-  
+  const token = localStorage.getItem("token");
+  let navigate: NavigateFunction = useNavigate();
 
   useEffect(() => {
+    const fetchDogs = async () => {
+      try {
+        const response = await api.get('/api/v1/dogs');
+        const dogsWithLikes = response.data.map((dog: any) => ({
+          ...dog,
+          likes: dog.likes || [], // Ensure likes is always an array
+          likedByCurrentUser: Array.isArray(dog.likes) && dog.likes.some((like: any) => like.userid === getCurrentUser().id)
+        }));
+        setDogs(dogsWithLikes);
+      } catch (error) {
+        console.error('Error fetching dogs:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
     const user = getCurrentUser();
-    if (user && user.role === 'admin','user') {
-      setCurrentUser(user);
-      fetchDogs();
-    }
-    }, []);
+    setCurrentUser(user);
+    fetchDogs();
+  }, []);
 
-  const fetchDogs = async () => {
-    setLoading(true);
-    try {
-      const response = await api.get('/api/v1/dogs', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      setDogs(response.data);
-    } catch (error) {
-      console.error('Error fetching dogs:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  
   const handleLike = async (id: number) => {
     const userid = getCurrentUser().id;
-    console.log(id);
-    console.log('u:',userid, 'd:',id);
-  if (!id || !userid) {
-      console.error('Missing dogid or userid', { id, userid});
+    if (!id || !userid) {
+      console.error('Missing dogid or userid', { id, userid });
       return;
     }
-  try {
-      setLikeLoading(id);
-      const likedDogId = await likeDogs(id, userid);
-      console.log('Liked Dog ID:', likedDogId);
 
-      // Update localStorage to reflect that the user has liked this dog
-      localStorage.setItem(`liked_${likedDogId}`, 'true');
-
-      updateDogList(id, { likes: dogs.find(dog => dog.id === id)?.likes + 1 }); // Update likes count locally
-      setUserLikedDogs(prevLikedDogs => [...prevLikedDogs, id]); // Mark dog as liked by the current user
+    setLikeLoading(id);
+    try {
+      await likeDogs(id, userid);
+      setDogs((prevDogs) =>
+        prevDogs.map((dog) =>
+          dog.id === id ? { ...dog, likedByCurrentUser: true, likes: [...dog.likes, { userid }] } : dog
+        )
+      );
     } catch (error) {
       console.error('Error liking dog:', error);
     } finally {
@@ -77,19 +75,25 @@ const DogList: React.FC = () => {
 
   const handleDislike = async (id: number) => {
     const userid = getCurrentUser()?.id;
-
     if (!userid) {
       console.error('Missing user id');
       return;
     }
 
+    setLikeLoading(id);
     try {
       await dislikeDogs(id, userid);
-      message.success('Disliked successfully');
-      fetchDogs(); // Refresh the dog list after successful dislike
+      setDogs((prevDogs) =>
+        prevDogs.map((dog) =>
+          dog.id === id
+            ? { ...dog, likedByCurrentUser: false, likes: dog.likes.filter((like: any) => like.userid !== userid) }
+            : dog
+        )
+      );
     } catch (error) {
       console.error('Error disliking dog:', error);
-      message.error('Failed to dislike dog');
+    } finally {
+      setLikeLoading(null);
     }
   };
 
@@ -103,12 +107,7 @@ const DogList: React.FC = () => {
     const id = commentedDogId;
 
     try {
-      // Simulate backend API call to submit comment (replace with actual API call)
       console.log(`Submitting comment for dog with ID: ${id}, Comment: ${comment}`);
-      // Replace the following with your actual API endpoint for commenting on a dog
-      // const response = await api.post(`/api/v1/dogs/${id}/comment`, { comment });
-
-      // Example: Display success message (assuming response includes success indicator)
       message.success('Comment submitted successfully');
     } catch (error) {
       console.error('Error submitting comment:', error);
@@ -119,80 +118,118 @@ const DogList: React.FC = () => {
     }
   };
 
-  const updateDogList = (id: number, updatedDog: any) => {
-    setDogs(prevDogs =>
-      prevDogs.map(dog =>
-        dog.id === id ? { ...dog, ...updatedDog } : dog
-      )
-    );
+  const handleSearch = async () => {
+    let urlPath = '/api/v1/dogs';
+
+    if (searchType === "breed") {
+      urlPath += `/breed/${searchValue}`;
+    } else if (searchType === "age") {
+      urlPath += `/age/${searchValue}`;
+    } else if (searchType === "all" && searchValue === "") {
+      urlPath += `/`;
+    }
+
+    try {
+      const response = await api.get(urlPath);
+      if (!response.data.length || response.data.length === 0) {
+        message.info("No data found");
+        navigate("/profile");
+      } else {
+        setSearchedDogs(response.data);
+        setSearchOK(true);
+      }
+    } catch (error) {
+      console.error('Error fetching dogs:', error);
+    }
   };
-  
-  if (loading) {
-    const antIcon = <LoadingOutlined style={{ fontSize: 48 }} spin />;
-    return (<Spin indicator={antIcon} />);
+
+  function handleChange(value: any) {
+    message.info("Please enter the breed or age of the dog to search");
+    setPress(value);
+    console.log(`selected ${value}`);
   }
 
-  if (!dogs.length) {
-    return (<div>There are no dogs available now.</div>);
+  if (loading) {
+    const antIcon = <LoadingOutlined style={{ fontSize: 48 }} spin />;
+    return <Spin indicator={antIcon} />;
   }
 
   return (
     <Row gutter={[16, 16]} style={{ marginLeft: "15px" }}>
-     
-      {dogs.map(({ id, name, breed, age, description, imageurl, ownerid, likes }) => (
-        <Col key={id}>
-          <Card
-            title={name}
-            style={{ width: 300 }}
-            cover={<img alt="example" src={imageurl} />}
-            hoverable
-                        actions={[
-                          <Tooltip title={userLikedDogs.includes(id) ? "Dislike" : "Like"}>
-                            {likeLoading === id ? (
-                              <LoadingOutlined />
-                            ) : (
-                              <>
-                                {userLikedDogs.includes(id) ? (
-                                  <HeartFilled style={{ color: 'red' }} key="like" onClick={() => handleDislike(id)} />
-                                ) : (
-                                  <HeartOutlined key="like" onClick={() => handleLike(id)} />
-                                )}
-                                {likes}
-                              </>
-                            )}
-              </Tooltip>,
-              <Tooltip title="Comment">
-                <MessageOutlined key="comment" onClick={() => handleComment(id)} />
-              </Tooltip>,
-              ownerid === getCurrentUser()?.id && <EditForm isNew={false} aid={id} />
-            ]}
-          >
-            <p>Breed: {breed}</p>
-            <p>Age: {age}</p>
-            <p>Description: {description}</p>
-          </Card>
-        </Col>
-      ))}
-      <Modal
-        title="Add Comment"
-        visible={isCommentModalVisible}
-        onCancel={() => setIsCommentModalVisible(false)}
-        footer={null}
-      >
-        <Form onFinish={handleCommentSubmit}>
-          <Form.Item
-            name="comment"
-            rules={[{ required: true, message: 'Please enter your comment!' }]}
-          >
-            <Input.TextArea placeholder="Enter your comment" rows={4} />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+      <Col span={16}>
+        <Title level={3} style={{ color: "#0032b3" }}>Dog List</Title>
+        <Title level={5}>Find your favorite dog</Title>
+        <Search placeholder="Search Dogs"
+          allowClear
+          enterButton="Search"
+          size="large"
+          onSearch={handleSearch} />
+        <Select defaultValue="all" style={{ width: 280, marginRight: '200px' }} onChange={handleChange}>
+          <Option value="all">All</Option>
+          <Option value="breed">Breed</Option>
+          <Option value="age">Age</Option>
+        </Select>
+
+        {isSearchOK ? (
+          <Table dataSource={dogsData}>
+            <Column title="ID" dataIndex="id" key="id" />
+            <Column title="Name" dataIndex="name" key="name" />
+            <Column title="Breed" dataIndex="breed" key="breed" />
+            <Column title="Age" dataIndex="age" key="age" />
+            <Column title="Description" dataIndex="description" key="description" />
+          </Table>
+        ) : (
+          dogs.map(({ id, name, breed, age, description, imageurl, ownerid, likes, likedByCurrentUser }) => (
+            <Card
+              key={id}
+              title={name}
+              style={{ width: 300, marginBottom: 16 }}
+              cover={<img alt="example" src={imageurl} />}
+              actions={[
+                <Tooltip title={likedByCurrentUser ? "Dislike" : "Like"}>
+                  {likeLoading === id ? (
+                    <LoadingOutlined />
+                  ) : likedByCurrentUser ? (
+                    <HeartFilled style={{ color: 'red' }} key="like" onClick={() => handleDislike(id)} />
+                  ) : (
+                    <HeartOutlined key="like" onClick={() => handleLike(id)} />
+                  )}
+                  {likes.length}
+                </Tooltip>,
+                <Tooltip title="Comment">
+                  <MessageOutlined key="comment" onClick={() => handleComment(id)} />
+                </Tooltip>,
+                ownerid === getCurrentUser()?.id && <EditForm isNew={false} aid={id} />
+              ]}
+            >
+              <p>Breed: {breed}</p>
+              <p>Age: {age}</p>
+              <p>Description: {description}</p>
+            </Card>
+          ))
+        )}
+
+        <Modal
+          title="Add Comment"
+          visible={isCommentModalVisible}
+          onCancel={() => setIsCommentModalVisible(false)}
+          footer={null}
+        >
+          <Form onFinish={handleCommentSubmit}>
+            <Form.Item
+              name="comment"
+              rules={[{ required: true, message: 'Please enter your comment!' }]}
+            >
+              <Input.TextArea placeholder="Enter your comment" rows={4} />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+      </Col>
     </Row>
   );
 };

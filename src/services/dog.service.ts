@@ -62,26 +62,14 @@ export const likeDogs = async (id: number, userid: number) => {
 
 export const dislikeDogs = async (id: number, userid: number) => {
   try {
-    const response = await api.delete(`/api/v1/dogs/${id}/likes`, {
-      headers: {
-        'Authorization': `Basic ${btoa('ashi:111111')}`, // Replace with actual username and password
-      }
-    });
+    const response = await api.delete(`/api/v1/dogs/${id}/likes`, { headers: authHeader() });
+    return response.data;
     return response.data;
       } catch (error) {
         throw error;
       }
     };
 
-export const checkUserLiked = async (userid: number): Promise<number[]> => {
-  try {
-    const response = await api.get(`/api/v1/users/${userid}/likedDogs`);
-    return response.data.likedDogs; // Assuming your API returns an array of dog IDs liked by the user
-  } catch (error) {
-    console.error('Error fetching user liked dogs:', error);
-    return []; // Return empty array or handle error as per your application's requirement
-  }
-};
 
 const handleAxiosError = (error: AxiosError) => {
   if (error.response) {

@@ -95,7 +95,7 @@ const App: React.FC = () => {
                   </Link>
                   <Button onClick={handleLogout} type="primary">
                     <LogoutOutlined style={{ fontSize: '32px' }} />
-                    <Link to="/login">Login</Link>
+                    <Link to="/login"></Link>
                   </Button>
                 </Space>
               ) : (
