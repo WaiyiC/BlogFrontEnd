@@ -93,7 +93,7 @@ const App: React.FC = () => {
                       <Button type="primary">Manage Dogs</Button>
                     </Link>
                   )}
-                  <Link to="/favpage">
+                  <Link to="/favcard">
                     <HeartFilled style={{ fontSize: '32px' }} />
                   </Link>
                   <Button onClick={handleLogout} type="primary">

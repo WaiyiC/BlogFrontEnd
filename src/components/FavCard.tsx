@@ -1,92 +1,66 @@
-import 'antd/dist/reset.css';
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Card, Col, Row, Spin } from 'antd';
-import axios from 'axios';
-import { LoadingOutlined, CloseSquareOutlined, CloseSquareFilled } from '@ant-design/icons';
-import PostIcon from './posticon';
-import Displaycomment from './comments';
-import { api } from './common/http-common';
+// FavPage.tsx
 
-const FavCard = (props: any) => {
-  const [articles, setArticles] = useState<any[]>([]);
+import React, { useEffect, useState } from 'react';
+import { Spin, Card, Row, Col, Typography } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
+import { getFav } from '../services/dog.service'; // Adjust this based on your service file
+
+const { Text } = Typography;
+
+const FavCard: React.FC = () => {
+  const [favorites, setFavorites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [theme, setTheme] = useState('outlined');
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchArticles = async () => {
+    const fetchFavorites = async () => {
       try {
-        const results = await api.get(`/api/v1/fav`);
-        console.log('API results:', results.data);
-        setArticles(results.data);
+        const response = await getFav(); // Assuming getFav fetches favorite dogs
+        console.log('Favorites:', response.data); // Verify the response structure
+        setFavorites(response.data); // Assuming response.data is an array of favorite dogs
+        console.log(response.data);
       } catch (error) {
-        console.error('Error fetching articles:', error);
+        console.error('Error fetching favorites:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchArticles();
+    fetchFavorites();
   }, []);
-
-  const handleDelete = async (fav: any) => {
-    setTheme('filled');
-    try {
-      const response = await axios.delete(fav.links.fav, {
-        headers: {
-          "Authorization": `Basic ${localStorage.getItem('aToken')}`
-        }
-      });
-      if (response.data.message === "removed") {
-        alert("This article is removed from your favorite list");
-        navigate("/favpage");
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error('Error deleting favorite:', error);
-      alert("Check network problems");
-    }
-  };
 
   if (loading) {
     const antIcon = <LoadingOutlined style={{ fontSize: 48 }} spin />;
     return <Spin indicator={antIcon} />;
-  } else {
-    if (!articles.length) {
-      return <div>There is no article available now.</div>;
-    } else {
-      const Icon = getIcon(theme);
-      return (
-        <>
-          <Row gutter={[16, 16]}>
-            {articles.map(({ id, title, alltext, imageurl, links }) => (
-              <Col key={id}>
-                <Card
-                  title={title}
-                  style={{ width: 300 }}
-                  cover={<img alt="example" src={imageurl} />}
-                  hoverable
-                  actions={[
-                    <PostIcon type="like" countLink={links.likes} id={id} />,
-                    <Displaycomment msgLink={links.msg} id={id} />,
-                    <PostIcon type="heart" />,
-                    <Icon onClick={() => handleDelete({ links })} />
-                  ]}
-                >
-                  <Link to={`/${id}`}>Details</Link>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        </>
-      );
-    }
   }
-};
 
-function getIcon(theme: string) {
-  return theme === 'filled' ? CloseSquareFilled : CloseSquareOutlined;
-}
+  return (
+    <div style={{ padding: '20px' }}>
+      <Row gutter={[16, 16]}>
+        {favorites.length === 0 ? (
+          <Text>No favorite dogs found.</Text>
+        ) : (
+          favorites.map(({id, name, breed, age, description, imageurl}) => (
+            <Col key={id} xs={24} sm={12} md={8} lg={6} xl={4}>
+              <Card
+                title={name}
+                cover={<img alt="dog" src={imageurl} style={{ height: 200, objectFit: 'cover' }} />}
+                actions={[
+                  <Link to={`/dogList/${id}`}>View Dog</Link> // Issue: Empty `to` prop
+                  // <Link to={`/remove/${dog.id}`}>Remove</Link>, // Optional: Uncomment if needed
+                ]}
+              >
+                <p>Breed: {breed}</p>
+                <p>Age: {age}</p>
+                <p>Description: {description}</p>
+              </Card>
+
+            </Col>
+          ))
+        )}
+      </Row>
+    </div>
+  );
+};
 
 export default FavCard;

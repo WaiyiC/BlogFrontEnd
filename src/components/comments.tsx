@@ -8,7 +8,7 @@ import { getCurrentUser } from "../services/auth.service";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 
 
-const DisplayComment = (props:any) => {    
+const comments = (props:any) => {    
 const [article_comments, setComments] = React.useState<any>([]);
 const [isShow, setIsShow] = React.useState(false); 
 const currentUser = getCurrentUser();
@@ -129,4 +129,4 @@ Icon=DeleteFilled;
 
 
 
-export default DisplayComment
+export default comments;

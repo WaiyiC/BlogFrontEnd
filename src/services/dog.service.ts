@@ -204,17 +204,6 @@ export const addFavorite = async (userId: number, dogId: number) => {
   }
 };
 
-export const fetchFavorites = async (userId: number) => {
-    try {
- const response = await axios.get(`${API_URL}/fav`, { headers: authHeader() });
-  return response.data;
-    } catch (error) {
-    if (axios.isAxiosError(error)) {
-      handleAxiosError(error);
-      throw error;
-    } else {
-      console.error('Unknown error:', error);
-      throw error;
-    }
-  }
+export const getFav = () => {
+  return axios.get(`${API_URL}/fav`, { headers: authHeader() });
 };
