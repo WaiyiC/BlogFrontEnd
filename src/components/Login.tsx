@@ -22,7 +22,7 @@ const Login: React.FC = () => {
       const response = await login(username, password);
       if (response) {
         localStorage.setItem("user", JSON.stringify(response.user));
-        localStorage.getItem("token");
+        localStorage.setItem("token", response.token);
         console.log(localStorage.getItem("token"));
         navigate("/profile");
         window.location.reload();

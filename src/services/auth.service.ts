@@ -17,9 +17,9 @@ export const register = async (username: string, email: string, password: string
 export const login = async (username: string, password: string) => {
   console.log('username '+ username)
   console.log('password '+ password)
-  const access_token: string = `Basic ${Buffer.from(`${username}:${password}`, 'utf8').toString('base64')}`;
+  const token: string = `Basic ${Buffer.from(`${username}:${password}`, 'utf8').toString('base64')}`;
 
-  console.log('access_token '+ access_token)
+  console.log('Token '+ token)
   let data = '';
   let path:string = "https://a9cae81d-c094-4635-9860-14e886ff26fe-00-1n32cs1xece6w.pike.replit.dev:3000/api/v1/users/login";  
 console.log('path '+ path)
@@ -28,7 +28,7 @@ console.log('path '+ path)
     maxBodyLength: Infinity,
     url: path,
     headers: {
-      'Authorization': `${access_token}`,
+      'Authorization': `${token}`,
     },
     data: '',
   };
@@ -38,7 +38,7 @@ console.log('path '+ path)
 try {
     const response = await axios.request(config);
     console.log('Login response:', response.data);
-    return { user: response.data, token: access_token };
+    return { user: response.data, token: token };
   } catch (error) {
     console.error('Error during login:', error);
     if (error.response) {

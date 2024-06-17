@@ -14,6 +14,8 @@ import Dashboard from './components/Dashboard';
 import About from './components/About';
 import Profile from './components/Profile';
 import FavPage from './components/favpage';
+import FavCard from './components/FavCard';
+
 import DogList from './components/DogList';
 import AddDog from './components/AddDog';
 import DogDetail from './components/DetailDog';
@@ -117,6 +119,8 @@ const App: React.FC = () => {
             <Route path="/profile" element={<Profile />} />
             <Route path="/register" element={<Register />} />          
             <Route path="/login" element={<Login />} />
+            <Route path="/favcard" element={<FavCard />} />
+
             <Route path="/favpage" element={<FavPage />} />	          
               <Route path="/dogList" element={<DogList />} />
               <Route path="/dogList/:id" element={<DogDetail />} />

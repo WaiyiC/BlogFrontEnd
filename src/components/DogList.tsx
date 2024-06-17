@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Col, Row, Spin, Tooltip, Modal, Form, Input, Button, message, Typography } from 'antd';
-import { LoadingOutlined, PlusOutlined, HeartOutlined, HeartFilled, MessageOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined, HeartOutlined, HeartFilled, MessageOutlined, StarOutlined, StarFilled } from '@ant-design/icons';
 import LikeT from "../types/likes.type";
 import { BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom';
 import api from './common/http-common';
@@ -154,10 +154,17 @@ const DogList: React.FC = () => {
                     )}
                     {likes.length}
               </Tooltip>,
-              <Tooltip title="Comment">
-                <MessageOutlined key="comment" onClick={() => handleComment(id)} />
-              </Tooltip>,
-              ownerid === getCurrentUser()?.id && <EditForm isNew={false} aid={id} />
+             
+                  <Tooltip title={likedByCurrentUser ? "Dislike" : "Like"}>
+                        {likeLoading === id ? (
+                          <LoadingOutlined />
+                        ) : likedByCurrentUser ? (
+                          <StarFilled style={{ color: 'red' }} key="like" onClick={() => handleDislike(id)} />
+                        ) : (
+                          <StarOutlined key="like" onClick={() => handleLike(id)} />
+                        )}
+                  </Tooltip>,
+              
             ]}
           >
             <Link to={`/dogList/${id}`}>
@@ -168,26 +175,7 @@ const DogList: React.FC = () => {
             
         </Col>
       ))}
-      <Modal
-        title="Add Comment"
-        visible={isCommentModalVisible}
-        onCancel={() => setIsCommentModalVisible(false)}
-        footer={null}
-      >
-        <Form onFinish={handleCommentSubmit}>
-          <Form.Item
-            name="comment"
-            rules={[{ required: true, message: 'Please enter your comment!' }]}
-          >
-            <Input.TextArea placeholder="Enter your comment" rows={4} />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+
     </Row>
       </Col>
     </Row>

@@ -99,11 +99,9 @@ export const commentDogs = async (id: number, userid: number, messagetxt: string
   } catch (error) {
     if (axios.isAxiosError(error)) {
       handleAxiosError(error);
-      // Optionally handle and re-throw the error to propagate it further
       throw error;
     } else {
       console.error('Unknown error:', error);
-      // Handle other types of errors (not AxiosError) if needed
       throw error;
     }
   }
@@ -190,3 +188,33 @@ export const deleteDog = async (id: number) => {
   }
 };
 
+export const addFavorite = async (userId: number, dogId: number) => {
+  try {
+   
+    const response = await axios.post(`${API_URL}/${dogId}/fav`, { userId, dogId }, { headers: authHeader() });
+  return response.data;
+    } catch (error) {
+    if (axios.isAxiosError(error)) {
+      handleAxiosError(error);
+      throw error;
+    } else {
+      console.error('Unknown error:', error);
+      throw error;
+    }
+  }
+};
+
+export const fetchFavorites = async (userId: number) => {
+    try {
+ const response = await axios.get(`${API_URL}/fav`, { headers: authHeader() });
+  return response.data;
+    } catch (error) {
+    if (axios.isAxiosError(error)) {
+      handleAxiosError(error);
+      throw error;
+    } else {
+      console.error('Unknown error:', error);
+      throw error;
+    }
+  }
+};

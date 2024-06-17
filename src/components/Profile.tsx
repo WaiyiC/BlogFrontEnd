@@ -10,7 +10,7 @@ import EditForm from "./EditForm";
 
 
 const Profile: React.FC = () => {
- 
+
   const currentUser = getCurrentUser();
   const [showUploadHeader, setShowUploadHeader] = useState<boolean>(false);
 
@@ -27,8 +27,8 @@ console.log('current user' + JSON.stringify(currentUser))
         <h2 style={{color:"#135200",marginLeft:"15px"}}>
           <strong>{currentUser.username}</strong> Profile
         </h2>
-         
-      
+
+
 <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
       <Row >  <Col span={12}>   
        <div className="Profile" style={{marginLeft:"15px"}} >
@@ -49,7 +49,7 @@ console.log('current user' + JSON.stringify(currentUser))
          <th align="left" style={{background:"#f4ffb8"}}>About me:  </th>
          <td style={{background:"#f4ffb8"}}>{currentUser.about}</td>
          </tr>  
-        
+
          <tr> 
           <th align="left" style={{background:"#f4ffb8"}} >Role: </th>
          <td style={{background:"#f4ffb8"}}>{currentUser.role}</td>
@@ -62,23 +62,23 @@ console.log('current user' + JSON.stringify(currentUser))
     <Col span={12}>
       { currentUser.role=="admin"&& <SearchUser authbasic={ `${currentUser.atoken}`}/>}
       </Col>
-      
+
       <Col span={18}>
         <div style={{marginLeft:"15px",marginBottom:"15px"}}>
       { currentUser.role=="admin"&&  <ImageUpload />}
       </div>
       </Col>
-     
+
       <Col span={18}>
-        
+
         <div style={{marginLeft:"15px",marginBottom:"15px"}}>
         { currentUser.role=="admin"&&  <EditForm  isNew={true} />}<h3> Create New Article</h3></div>
       </Col>    
       </Row>
-        
-      
+
+
      </Space>      
-      
+
             </>
   )
 
