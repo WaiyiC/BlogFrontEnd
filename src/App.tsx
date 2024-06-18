@@ -1,9 +1,7 @@
-//import './App.css';
 import 'antd/dist/reset.css';
 import { Layout, Space, Button, Typography } from 'antd';
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-//import Landing from "./components/Landing"
 import * as AuthService from "./services/auth.service";
 import UserT from './types/user.type';
 import Login from "./components/Login";
@@ -21,7 +19,7 @@ import AddDog from './components/AddDog';
 import DogDetail from './components/DetailDog';
 
 import ManageDog from './components/manageDog';
-import { LogoutOutlined, HomeOutlined, DashboardOutlined, InfoCircleOutlined, HeartFilled } from '@ant-design/icons';
+import { LogoutOutlined, HomeOutlined, DashboardOutlined, InfoCircleOutlined, StarFilled } from '@ant-design/icons';
 
 
 const { Header, Content, Footer } = Layout;
@@ -67,18 +65,18 @@ const App: React.FC = () => {
   return (
     <Router>
       <Layout>
-        <Header>
+        <Header  style={{backgroundColor: "#4A4A4A"}}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <Space>
                 <Link to="/" >
-                  <HomeOutlined style={{ fontSize: '32px' }} />
+                  <HomeOutlined style={{ fontSize: '32px', color: '#5ADCC6' }} />
                 </Link>
                 <Link to="/dashboard">
-                  <DashboardOutlined style={{ fontSize: '32px' }} />
+                  <DashboardOutlined style={{ fontSize: '32px', color: '#5ADCC6' }} />
                 </Link>
                 <Link to="/doglist">
-                  <InfoCircleOutlined style={{ fontSize: '32px' }} />
+                  <InfoCircleOutlined style={{ fontSize: '32px', color: '#5ADCC6' }} />
                 </Link>
               </Space>
             </div>
@@ -86,20 +84,21 @@ const App: React.FC = () => {
               {currentUser ? (
                 <Space>
                   <Link to="/profile">
-                    <Title level={5} style={{ color: "#135200" }}>{currentUser.username}</Title>
+                    <Title level={5} style={{ color: '#5ADCC6' }}>{currentUser.username}</Title>
                   </Link>
                   {currentUser.role === 'admin' && (
-                    <Link to="/managedog">
-                      <Button type="primary">Manage Dogs</Button>
+                    <Link to="/managedog" >
+                      <Title level={5} style={{ color: '#5ADCC6' }}>
+                      Manage Dogs</Title>
                     </Link>
                   )}
                   <Link to="/favcard">
-                    <HeartFilled style={{ fontSize: '32px' }} />
+                    <StarFilled style={{ fontSize: '20px', color: '#5ADCC6' }} />
                   </Link>
-                  <Button onClick={handleLogout} type="primary">
-                    <LogoutOutlined style={{ fontSize: '32px' }} />
-                    <Link to="/login"></Link>
-                  </Button>
+                    <LogoutOutlined style={{ fontSize: '20px', color: '#5ADCC6' }} />
+                    <Link to="/login" onClick={handleLogout} ><Title level={5} style={{ color: '#5ADCC6' }}>
+                      </Title></Link>
+                 
                 </Space>
               ) : (
                 <Space>

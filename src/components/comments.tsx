@@ -110,9 +110,9 @@ Icon=DeleteFilled;
     <Flex gap="middle" align='center'  justify = 'flex-start' >
      <li> 
         <Comment 
-        //  actions={actions}
+       
           author={item.username}
-         // avatar={item.avatar}
+         
         content={item.messagetxt}   
         datetime={item.datemodified} />                               
       </li>

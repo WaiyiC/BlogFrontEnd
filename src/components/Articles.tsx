@@ -14,7 +14,7 @@ const Articles: React.FC = () => {
     const fetchArticles = async () => {
       console.log('Fetching dogs...');
       try {
-        const response = await api.get('/api/v1/articles');
+        const response = await api.get('/articles');
         console.log('API response:', response);
           setArticles(response.data);
       } catch (error) {

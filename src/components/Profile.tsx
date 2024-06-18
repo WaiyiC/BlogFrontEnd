@@ -60,7 +60,7 @@ console.log('current user' + JSON.stringify(currentUser))
          </tr>  </table>
     </div></Col>
     <Col span={12}>
-      { currentUser.role=="admin"&& <SearchUser authbasic={ `${currentUser.atoken}`}/>}
+      { currentUser.role=="admin"&& <SearchUser authbasic={ `${currentUser.token}`}/>}
       </Col>
 
       <Col span={18}>

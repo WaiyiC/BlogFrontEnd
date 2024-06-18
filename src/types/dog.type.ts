@@ -4,5 +4,5 @@ export default interface DogT {
   breed: string,
   age: number,
     description: string,
-    imageurl:string
+    image:string
 }

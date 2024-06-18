@@ -1,49 +1,53 @@
 import React from 'react';
 //import '../App.css';
 import 'antd/dist/reset.css';
-import { Upload, Button, message, Alert,Typography } from 'antd';
+import { Upload, Button, message, Alert, Typography } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { api } from './common/http-common';
 
 class ImageUpload extends React.Component {
- constructor(props:any) {
-  super(props);
-  this.state = {
-    fileList: [],
-    uploading: false,
-    imgPosted: [],
-    isUploadOk: false,}
-    }      
-  
+  constructor(props) {
+    super(props);
+    this.state = {
+      fileList: [],
+      uploading: false,
+      imgPosted: [],
+      isUploadOk: false,
+      imageFilename: ''
+    };
+  }
+
   handleUpload = () => {
     const { fileList } = this.state;
+    const { setImageFilename } = this.props; // Destructure the prop here
     const formData = new FormData();
-     fileList.forEach(file => {
+    fileList.forEach(file => {
       formData.append('upload', file, file.name);
     });
-  
+
     this.setState({
       uploading: true
     });
-  let requestOptions = {
-  method: 'POST',
-  body: formData,
-  redirect: 'follow'
-  };
-		fetch(`${api.uri}/images`,requestOptions)
+
+    let requestOptions = {
+      method: 'POST',
+      body: formData,
+      redirect: 'follow'
+    };
+
+    fetch(`https://a9cae81d-c094-4635-9860-14e886ff26fe-00-1n32cs1xece6w.pike.replit.dev:3000/api/v1/images`, requestOptions)
       .then((response) => response.json())
-			.then((result) => {
+      .then((result) => {
         message.success('upload successfully.');
-       this.setState({
-       isUploadOk : true
-       });
-       this.setState({
-      imgPosted: result
-      });      
-      console.log("result ",result); 
-       console.log("isUPloadOK  ",this.state.isUploadOk); 
-        console.log("imgPosted ",this.state.imgPosted); 
-       
+        this.setState({
+          isUploadOk: true,
+          imageFilename: result.filename
+        });
+        setImageFilename(result.filename); // Use the prop here
+        this.setState({
+          imgPosted: result
+        });
+        console.log("result ", result);
       })
       .catch((error) => {
         message.error('upload failed.');
@@ -56,9 +60,9 @@ class ImageUpload extends React.Component {
       });
   };
 
-   render() {
-     const { Title } = Typography;
-    const { uploading, fileList, isUPloadOK,imgPosted} = this.state;
+  render() {
+    const { Title } = Typography;
+    const { uploading, fileList, imageFilename } = this.state;
     const props = {
       onRemove: file => {
         this.setState(state => {
@@ -80,27 +84,31 @@ class ImageUpload extends React.Component {
     };
 
     return (
-      <><div>
-        <p></p>
-        <Title level={3}  style={{color:"#0032b3"}}>Select and Upload Pet Image</Title>
-        <Upload {...props}>
-          <Button icon={<UploadOutlined />}>Select File</Button>
-        </Upload>
-        <Button
-          type="primary"
-          onClick={this.handleUpload}
-          disabled={fileList.length === 0}
-          loading={uploading}
-          style={{ marginTop: 16 }}
-        >
-          {uploading ? 'Uploading' : 'Start Upload'}
-        </Button>
-                      {
-                      this.state.isUploadOk&&<div><p style={{ color: 'red' }}>Image uploaded successfully: </p><Alert message= {JSON.stringify(this.state.imgPosted)}  type="success" /> </div>}
-      
-      </div>
+      <>
+        <div>
+          <p></p>
+          <Title level={3} style={{ color: "#0032b3" }}>Select and Upload Pet Image</Title>
+          <Upload {...props}>
+            <Button icon={<UploadOutlined />}>Select File</Button>
+          </Upload>
+          <Button
+            onClick={this.handleUpload}
+            disabled={fileList.length === 0}
+            loading={uploading}
+            style={{ marginTop: 16, marginBottom: 16 }}
+          >
+            {uploading ? 'Uploading' : 'Start Upload'}
+          </Button>
+          {this.state.isUploadOk && (
+            <div>
+              <p style={{ color: 'red' }}>Image uploaded successfully: </p>
+              <Alert style={{ marginTop: 16, marginBottom: 16 }} message={JSON.stringify(this.state.imgPosted)} type="success" />
+            </div>
+          )}
+        </div>
       </>
     );
   }
 }
+
 export default ImageUpload;
