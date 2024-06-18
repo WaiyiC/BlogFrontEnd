@@ -20,6 +20,7 @@ import DogDetail from './components/DetailDog';
 
 import ManageDog from './components/manageDog';
 import { LogoutOutlined, HomeOutlined, DashboardOutlined, InfoCircleOutlined, StarFilled } from '@ant-design/icons';
+import Copyright from './components/Copyright';
 
 
 const { Header, Content, Footer } = Layout;
@@ -47,6 +48,7 @@ const App: React.FC = () => {
     setCurrentUser(undefined);
     return <Navigate to="/" />;
   };
+  
   const handleLogin = async (username: string, password: string) => {
     try {
       const response = await AuthService.login(username, password);
@@ -70,13 +72,14 @@ const App: React.FC = () => {
             <div>
               <Space>
                 <Link to="/" >
-                  <HomeOutlined style={{ fontSize: '32px', color: '#5ADCC6' }} />
+                  <HomeOutlined style={{ fontSize: '25px', color: '#5ADCC6' , marginLeft:"60%"}} />
                 </Link>
-                <Link to="/dashboard">
-                  <DashboardOutlined style={{ fontSize: '32px', color: '#5ADCC6' }} />
-                </Link>
+                
                 <Link to="/doglist">
-                  <InfoCircleOutlined style={{ fontSize: '32px', color: '#5ADCC6' }} />
+                  <InfoCircleOutlined style={{ fontSize: '25px', color: '#5ADCC6' , marginLeft:"60%"}} />
+                </Link>
+                <Link to="/favcard">
+                  <StarFilled style={{ fontSize: '25px', color: '#5ADCC6', marginLeft:"60%" }} />
                 </Link>
               </Space>
             </div>
@@ -92,18 +95,16 @@ const App: React.FC = () => {
                       Manage Dogs</Title>
                     </Link>
                   )}
-                  <Link to="/favcard">
-                    <StarFilled style={{ fontSize: '20px', color: '#5ADCC6' }} />
-                  </Link>
+                  <Link to="/login" onClick={handleLogout} >
                     <LogoutOutlined style={{ fontSize: '20px', color: '#5ADCC6' }} />
-                    <Link to="/login" onClick={handleLogout} ><Title level={5} style={{ color: '#5ADCC6' }}>
+                    <Title level={5} style={{ color: '#5ADCC6' }}>
                       </Title></Link>
                  
                 </Space>
               ) : (
                 <Space>
-                  <Link to="/login">Login</Link>
-                  <Link to="/register">Register</Link>
+                  <Link style={{ color: '#5ADCC6' }} to="/login">Login</Link>
+                  <Link  style={{ color: '#5ADCC6' }} to="/register">Register</Link>
                 </Space>
               )}
             </div>
@@ -127,7 +128,7 @@ const App: React.FC = () => {
             <Route path="/manageDog" element={<ManageDog />} />
           </Routes>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>Footer content</Footer>
+        <Footer style={{ textAlign: 'center' }}><Copyright/></Footer>
       </Layout>
     </Router>
   );

@@ -5,7 +5,7 @@ import { Buffer } from 'buffer';
 export const register = async (username: string, email: string, password: string, actiCode: string) => {
   // Log the URL to verify it's correctly formed
   console.log('Register URL:', `/api/v1/users`);
-  return await api.post(`/api/v1/users`, {
+  return await api.post(`/users`, {
     username,
     email,
     password,

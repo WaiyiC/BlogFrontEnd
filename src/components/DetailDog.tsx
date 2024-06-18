@@ -1,11 +1,10 @@
 import 'antd/dist/reset.css';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Spin, Col, Card, Form, Input, message,List } from 'antd';
-import axios from 'axios';
+import { Button, Spin, Col, Card, Form, Input, message, List } from 'antd';
 import { RollbackOutlined, LoadingOutlined, CloseSquareOutlined, CloseSquareFilled } from '@ant-design/icons';
 import { getCurrentUser } from "../services/auth.service";
-import { commentDogs  } from "../services/dog.service";
+import { commentDogs } from "../services/dog.service";
 import EditForm from './EditForm';
 import { api } from './common/http-common';
 import CommentT from "../types/comment.type";
@@ -23,6 +22,7 @@ const DogDetail: React.FC = () => {
   const [isCommentModalVisible, setIsCommentModalVisible] = useState<boolean>(false);
   const [isCommentLoading, setIsCommentLoading] = useState<boolean>(false);
   const [commentedDogId, setCommentedDogId] = useState<number | null>(null);
+
   const fetchDogDetails = async () => {
     try {
       const [dogResponse, commentsResponse] = await Promise.all([
@@ -49,50 +49,38 @@ const DogDetail: React.FC = () => {
       console.error('Error fetching dog details:', error);
     }
   };
-  
-  useEffect(() => {
-    // Fetch dog details including comments
-   
 
+  useEffect(() => {
     fetchDogDetails();
   }, [id]);
 
-  
-  const handleComment = (id: number) => {
-    console.log('Setting commentedDogId:', id);
-    setCommentedDogId(id);
-    setIsCommentModalVisible(true);
-  }; 
+  const handleCommentSubmit = async (values: CommentT) => {
+    const userid = getCurrentUser()?.id;
+    const dogid = parseInt(id);
+    const { messagetxt } = values;
 
+    if (!userid) {
+      message.error("You must be logged in to comment.");
+      return;
+    }
 
-  const handleCommentSubmit =  (values: CommentT) => {
-    let userid = getCurrentUser()?.id;
-    let dogid = parseInt(id);
-      const {messagetxt } = values;
-    console.log(token);
-    console.log('u:', userid);
-    console.log('dog:', id);
-    console.log('comment:', messagetxt);
-      commentDogs(dogid, userid, messagetxt).then(
-        (response) => {
+    setSubmittingComment(true);
+    try {
+      await commentDogs(dogid, userid, messagetxt);
+      message.success("Comment submitted successfully.");
+      fetchDogDetails(); // Refresh comments after submission
+    } catch (error) {
+      message.error("Error submitting comment.");
+      console.error('Error submitting comment:', error);
+    } finally {
+      setSubmittingComment(false);
+    }
+  };
 
-          window.alert("success")
-          fetchDogDetails();
-
-        })
-        .catch((error) => {
-                   window.alert(error)
-           console.log(error.toString());
-
-        }
-      );
-    };
-    
   const getIcon = (theme: string) => {
     return theme === 'filled' ? CloseSquareFilled : CloseSquareOutlined;
   };
 
-  
   if (loading) {
     const antIcon = <LoadingOutlined style={{ fontSize: 48 }} spin />;
     return <Spin indicator={antIcon} />;
@@ -108,10 +96,13 @@ const DogDetail: React.FC = () => {
     <>
       <h2>Dog Details</h2>
       <Col span={24}>
-        <Card title={dog.name} style={{ width: "90%", marginLeft: "5%", marginRight: "5%" }}
-          cover={<img alt="dog" src={dog.imageurl} />} hoverable
+        <Card
+          title={dog.name}
+          style={{ width: "90%", marginLeft: "5%", marginRight: "5%" }}
         >
           <div>
+            <p><img style={{ width: '40%', height: 'auto', marginLeft:"10%" , marginRight:"10%"}}
+              src={`https://a9cae81d-c094-4635-9860-14e886ff26fe-00-1n32cs1xece6w.pike.replit.dev:3000/api/v1/images/${dog.image}`}/></p>
             <h3>Breed</h3>
             <p>{dog.breed}</p>
             <h3>Age</h3>
@@ -122,15 +113,12 @@ const DogDetail: React.FC = () => {
           <Form onFinish={handleCommentSubmit}>
             <Form.Item
               name="messagetxt"
-              placeholder="Comment"
-
+              rules={[{ required: true, message: 'Please enter your comment' }]}
             >
-              <Input />
+              <Input placeholder="Comment" />
             </Form.Item>
             <Form.Item>
-              
               <Button
-                onClick={() => handleComment(dog.id)}
                 htmlType="submit"
                 loading={submittingComment}
               >

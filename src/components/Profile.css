@@ -1,0 +1,42 @@
+/* Profile.css */
+.profile-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height to center vertically */
+}
+
+.profile-container {
+  width: 60%; /* Adjust the width as needed */
+}
+
+.profile-table {
+  border-width: 1px;
+  border-color: #aaaaaa;
+  border-style: solid;
+  width: 100%;
+}
+
+.profile-table th,
+.profile-table td {
+  padding: 8px;
+}
+
+.profile-table th {
+  text-align: left;
+}
+
+.profile-table th:nth-child(even),
+.profile-table td:nth-child(even) {
+  background: #f4ffb8;
+}
+
+.profile-table th:nth-child(odd),
+.profile-table td:nth-child(odd) {
+  background: #d3f261;
+}
+
+.profile-header {
+  color: #135200;
+  margin-left: 15px;
+}

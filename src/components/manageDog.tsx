@@ -7,7 +7,7 @@ import DogT from "../types/dog.type";
 import { editDog, addDog, deleteDog,getDogById } from "../services/dog.service";
 import { api } from '../components/common/http-common';
 import ImageUpload from './ImageUpload'
-import EditForm from './EditForm'; 
+import { v4 as uuidv4 } from 'uuid';
 
 const ManageDog: React.FC = () => {
   const [dogs, setDogs] = useState<any[]>([]);
@@ -16,8 +16,7 @@ const ManageDog: React.FC = () => {
   const [currentDog, setCurrentDog] = useState<any>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [form] = Form.useForm();
-  const [imageFilename, setImageFilename] = useState('');
+  const [image, setImageFilename] = useState<string>('');
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -48,14 +47,14 @@ const ManageDog: React.FC = () => {
   };
 
   const handleAddDog = async (values: DogT) => {
-    const { name, breed, age, description, image } = values;
-
+    const { name, breed, age, description } = values;
+    const image = uuidv4();
     console.log(token);
   addDog(name, breed, age, description,image).then(
       (response) => {
 
         window.alert("success")
-        fetchDogs(); // Refresh the dog list after successful addition
+        fetchDogs(); 
         setIsModalVisible(false);
 
       })
@@ -67,11 +66,9 @@ const ManageDog: React.FC = () => {
     );
   };
 
-
-
-  
   const handleUpdateDog = async (values: any) => {
-    const { id, name, breed, age, description, image } = values;
+    const { id, name, breed, age, description } = values;
+    const image = uuidv4();
     try {
       await editDog(id,  name, breed, age, description, image );
       message.success('Dog updated successfully');
@@ -97,15 +94,24 @@ const ManageDog: React.FC = () => {
   };
 
 
-    const onFinish = (values: any) => {
-      console.log('Received values:', values);
+  const onFinish = (values: any) => {
+    console.log('Received values:', values);
+    if (isEditing) {
       handleUpdateDog(values);
-    };
+    } else {
+      handleAddDog(values);
+    }
+  };
   
   const showModal = (dog: any = null) => {
     setCurrentDog(dog);
     setIsEditing(!!dog);
     setIsModalVisible(true);
+    if (dog && dog.image) {
+          setImageFilename(dog.image); // Set image URL when modal is shown
+      } else {
+          setImageFilename(''); // Reset image URL if no dog or no image
+      }
   };
 
   if (loading) {
@@ -120,8 +126,7 @@ const ManageDog: React.FC = () => {
             <Col key={dog.id} xs={24} sm={12} md={8} lg={6}>
               <Card
                 title={dog.name}
-                style={{height: 300 }}
-                cover={<img alt="dog" src={dog.image} />} hoverable
+                style={{height: 400 }}
                 extra={
                   <>
                      <Button onClick={() => showModal(dog)}>Edit</Button>
@@ -145,6 +150,7 @@ const ManageDog: React.FC = () => {
                   </>
                 }
               >
+                <p><img src={`https://a9cae81d-c094-4635-9860-14e886ff26fe-00-1n32cs1xece6w.pike.replit.dev:3000/api/v1/images/${dog.image}`} alt="dog" style={{ width: '50%', height: 'auto',marginLeft:"10%" , marginRight:"10%"}} /></p>
                 <p>Breed: {dog.breed}</p>
                 <p>Age: {dog.age}</p>
                 <p>Description: {dog.description}</p>
@@ -196,15 +202,10 @@ const ManageDog: React.FC = () => {
           >
             <Input.TextArea />
           </Form.Item>
-
-          <Form.Item 
-            name="image" 
-            label="imag"
-            >
-            
-            <Input value={imageFilename} readOnly />
+          <Form.Item name="image" label="Image">
             <ImageUpload setImageFilename={setImageFilename} />
           </Form.Item>
+          
           <Form.Item>
             <Button htmlType="submit">
               {isEditing ? 'Update' : 'Add'}

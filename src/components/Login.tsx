@@ -83,14 +83,17 @@ const Login: React.FC = () => {
         <Form.Item>
           <Space>
             <Checkbox>Remember me</Checkbox>
-            <Link to="/forgot-password">Forgot password</Link>
+            <Link style={{ color: '#5ADCd9'}} to="/forgot-password">Forgot password</Link>
           </Space>
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit" loading={loading}>
-            Log in <LoginOutlined />
+          <Button style={{ color: '#5ADCd9'}} htmlType="submit" loading={loading}>
+            Log in 
           </Button>
-          <Text>Or <Link to="/register">register now!</Link></Text>
+          <Text> or <Button  >
+            <Link to="/register">Register now!</Link>
+            </Button>
+            </Text>
         </Form.Item>
       </Form>
       {message && <Text type="danger">{message}</Text>}

@@ -21,7 +21,7 @@ const authHeader = () => {
 
 
 export const getAllDogs = () => {
-  return axios.get(api.uri, "/", { headers: authHeader() });
+  return api.get("/", { headers: authHeader() });
 };
 
 export const addDog = async (name: string, breed: string, age: number, description: string, image: string) => {
@@ -187,7 +187,7 @@ export const getLikeById = async (id: number) => {
 
 export const addFavorite = async (userId: number, dogId: number) => {
   try {
-   
+
     const response = await api.post(`/dogs/${dogId}/fav`, { userId, dogId }, { headers: authHeader() });
   return response.data;
     } catch (error) {

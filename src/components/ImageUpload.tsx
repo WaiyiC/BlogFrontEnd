@@ -1,114 +1,64 @@
-import React from 'react';
-//import '../App.css';
-import 'antd/dist/reset.css';
-import { Upload, Button, message, Alert, Typography } from 'antd';
+import React, { useState } from 'react';
+import { Upload, Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { api } from './common/http-common';
 
-class ImageUpload extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      fileList: [],
-      uploading: false,
-      imgPosted: [],
-      isUploadOk: false,
-      imageFilename: ''
-    };
-  }
+interface ImageUploadProps {
+  setImageFilename: (filename: string) => void;
+}
 
-  handleUpload = () => {
-    const { fileList } = this.state;
-    const { setImageFilename } = this.props; // Destructure the prop here
-    const formData = new FormData();
-    fileList.forEach(file => {
-      formData.append('upload', file, file.name);
+const ImageUpload: React.FC<ImageUploadProps> = ({ setImageFilename }) => {
+  const [fileList, setFileList] = useState<any[]>([]);
+
+  const handleChange = (info: any) => {
+    let fileList = [...info.fileList];
+
+    // Limiting to only one file
+    fileList = fileList.slice(-1);
+
+    // Display image preview
+    fileList = fileList.map(file => {
+      if (file.response) {
+        // Check if filename exists in the response
+        const { filename } = file.response;
+        if (filename) {
+          file.url = file.response.url;
+          return file;
+        }
+      }
+      return file;
     });
 
-    this.setState({
-      uploading: true
-    });
+    setFileList(fileList);
 
-    let requestOptions = {
-      method: 'POST',
-      body: formData,
-      redirect: 'follow'
-    };
-
-    fetch(`https://a9cae81d-c094-4635-9860-14e886ff26fe-00-1n32cs1xece6w.pike.replit.dev:3000/api/v1/images`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        message.success('upload successfully.');
-        this.setState({
-          isUploadOk: true,
-          imageFilename: result.filename
-        });
-        setImageFilename(result.filename); // Use the prop here
-        this.setState({
-          imgPosted: result
-        });
-        console.log("result ", result);
-      })
-      .catch((error) => {
-        message.error('upload failed.');
-        console.error('Error:', error);
-      })
-      .finally(() => {
-        this.setState({
-          uploading: false,
-        });
-      });
+    // Notify parent component of the filename
+    if (fileList.length > 0 && fileList[0].response) {
+      const { filename } = fileList[0].response;
+      if (filename) {
+        setImageFilename(filename);
+      }
+    }
   };
 
-  render() {
-    const { Title } = Typography;
-    const { uploading, fileList, imageFilename } = this.state;
-    const props = {
-      onRemove: file => {
-        this.setState(state => {
-          const index = state.fileList.indexOf(file);
-          const newFileList = state.fileList.slice();
-          newFileList.splice(index, 1);
-          return {
-            fileList: newFileList,
-          };
-        });
-      },
-      beforeUpload: file => {
-        this.setState(state => ({
-          fileList: [...state.fileList, file],
-        }));
-        return false;
-      },
-      fileList,
-    };
 
-    return (
-      <>
-        <div>
-          <p></p>
-          <Title level={3} style={{ color: "#0032b3" }}>Select and Upload Pet Image</Title>
-          <Upload {...props}>
-            <Button icon={<UploadOutlined />}>Select File</Button>
-          </Upload>
-          <Button
-            onClick={this.handleUpload}
-            disabled={fileList.length === 0}
-            loading={uploading}
-            style={{ marginTop: 16, marginBottom: 16 }}
-          >
-            {uploading ? 'Uploading' : 'Start Upload'}
-          </Button>
-          {this.state.isUploadOk && (
-            <div>
-              <p style={{ color: 'red' }}>Image uploaded successfully: </p>
-              <Alert style={{ marginTop: 16, marginBottom: 16 }} message={JSON.stringify(this.state.imgPosted)} type="success" />
-            </div>
-          )}
-        </div>
-      </>
-    );
-  }
-}
+  const uploadButton = (
+    <div>
+      <Button icon={<UploadOutlined />}>Upload</Button>
+    </div>
+  );
+
+  return (
+    <Upload
+      name="file"
+      listType="picture-card"
+      className="avatar-uploader"
+      fileList={fileList}
+      action="/api/upload"  // Replace with your actual upload endpoint
+      onChange={handleChange}
+      showUploadList={{ showPreviewIcon: true, showRemoveIcon: true }}
+    >
+      {fileList.length >= 1 ? null : uploadButton}
+    </Upload>
+  );
+};
 
 export default ImageUpload;

@@ -14,8 +14,6 @@ const DogList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [likeLoading, setLikeLoading] = useState<number | null>(null);
   const [favLoading, setFavLoading] = useState<number | null>(null);
-
-  const [userLikedDogs, setUserLikedDogs] = useState<number[]>([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [breedFilter, setBreedFilter] = useState<string>('');
@@ -92,16 +90,16 @@ const DogList: React.FC = () => {
     }
   };
 
+
   const handleAddToFavorites = async (id: number) => {
     const userid = getCurrentUser().id;
     if (!id || !userid) {
       console.error('Missing dogid or userid', { id, userid });
       return;
     }
-     setFavLoading(id);
+    setFavLoading(id);
     try {
       await addFavorite(userid, id);
-     
     } catch (error) {
       console.error('Error adding to favorites:', error);
     } finally {
@@ -141,10 +139,10 @@ const DogList: React.FC = () => {
   }
 
   return (
-    <Row style={{ marginTop: "50px" }}>
+      <Row gutter={[16, 16]} style={{ marginTop: "15px" }}>
       <Col>
         <Title level={3} style={{ color: "#0032b3" }}>Find Your Favorite Dogs</Title>
-        <Row justify="center" gutter={[16, 16]} style={{ marginLeft: "5%", marginRight: "5%" }}>
+        <Row justify="center" gutter={[16, 32]} style={{ marginLeft: "5%", marginRight: "5%" }}>
           <Col span={12}>
             <Search placeholder="Search dogs by name" onSearch={handleSearch} enterButton />
           </Col>
@@ -157,13 +155,11 @@ const DogList: React.FC = () => {
           {dogs.length === 0 ? (
             <div>No dogs available</div>
           ) : (
-            dogs.map(({ id, name, breed, age, description, imageurl, likes, likedByCurrentUser }) => (
-              <Col key={id} xs={24} sm={12} md={8} lg={8} xl={8}>
-                <Card
-                  title={name}
-                  style={{ width: 350, height: 300 }}
-                  cover={<img alt="example" src={imageurl} />}
-                  hoverable
+            dogs.map(({ id, name, breed, age, description, image, likes, likedByCurrentUser }) => (
+              <Col key={id}  xs={24} sm={12} md={8} lg={6}>
+                  <Card
+                    title={name}
+                    style={{height: 400 }}
                   actions={[
                     <Tooltip title={likedByCurrentUser ? "Dislike" : "Like"}>
                       {likeLoading === id ? (
@@ -176,10 +172,8 @@ const DogList: React.FC = () => {
                     </Tooltip>,
                     <Tooltip title={"Add to Favorites"}>
                       {favLoading === id ? (
-                        <LoadingOutlined />
-                      ) :
-                      likedByCurrentUser ? (
-                        <StarFilled style={{ color: '#5ADCC6' }} key="favorite" onClick={() => handleAddToFavorites(id)} />
+                    
+                        <StarFilled style={{ color: '#5ADCC6' }} key="favorite"  />
                       ) : (
                         <StarOutlined style={{ color: 'gray' }} key="favorite" onClick={() => handleAddToFavorites(id)} />
                       )}
@@ -187,6 +181,7 @@ const DogList: React.FC = () => {
                   ]}
                 >
                   <Link to={`/dogList/${id}`}>
+                    <p><img src={`https://a9cae81d-c094-4635-9860-14e886ff26fe-00-1n32cs1xece6w.pike.replit.dev:3000/api/v1/images/${image}`} alt="dog" style={{ width: '50%', height: 'auto',marginLeft:"10%" , marginRight:"10%"}} /></p>
                     <p>Breed: {breed}</p>
                     <p>Age: {age}</p>
                     <p style={{ height: 50 }}>Description: {description}</p>

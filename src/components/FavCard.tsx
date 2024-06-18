@@ -58,11 +58,11 @@ const FavCard: React.FC = () => {
         {favorites.length === 0 ? (
           <Text>No favorite dogs found.</Text>
         ) : (
-          favorites.map(({id, name, breed, age, description, imageurl}) => (
+          favorites.map(({id, name, breed, age, description, image}) => (
             <Col key={id} xs={24} sm={12} md={8} lg={6} xl={4}>
               <Card
                 title={name}
-                cover={<img alt="dog" src={imageurl} style={{ height: 200, objectFit: 'cover' }} />}
+              
                 extra={[
                   <>
                   <Link to={`/dogList/${id}`}>View Dog</Link> 
@@ -86,7 +86,7 @@ const FavCard: React.FC = () => {
                   </>
                 ]}
               >
-              
+                <p><img src={`https://a9cae81d-c094-4635-9860-14e886ff26fe-00-1n32cs1xece6w.pike.replit.dev:3000/api/v1/images/${image}`} alt="dog" style={{ width: '50%', height: 'auto',marginLeft:"10%" , marginRight:"10%"}} /></p>
                 <p>Breed: {breed}</p>
                 <p>Age: {age}</p>
                 <p>Description: {description}</p>
