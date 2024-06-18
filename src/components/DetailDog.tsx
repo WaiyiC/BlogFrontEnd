@@ -23,34 +23,36 @@ const DogDetail: React.FC = () => {
   const [isCommentModalVisible, setIsCommentModalVisible] = useState<boolean>(false);
   const [isCommentLoading, setIsCommentLoading] = useState<boolean>(false);
   const [commentedDogId, setCommentedDogId] = useState<number | null>(null);
+  const fetchDogDetails = async () => {
+    try {
+      const [dogResponse, commentsResponse] = await Promise.all([
+        api.get(`/dogs/${id}`),
+        api.get(`/dogs/${id}/comment`) // Assuming endpoint for fetching comments
+      ]);
+
+      setDog(dogResponse.data);
+      setLoading(false);
+
+      // Fetch usernames for each comment
+      const commentPromises = commentsResponse.data.map((comment: any) =>
+        api.get(`/users/${comment.userid}`)
+      );
+
+      const usernames = await Promise.all(commentPromises);
+      const updatedComments = commentsResponse.data.map((comment: any, index: number) => ({
+        ...comment,
+        username: usernames[index].data.username
+      }));
+
+      setComments(updatedComments);
+    } catch (error) {
+      console.error('Error fetching dog details:', error);
+    }
+  };
+  
   useEffect(() => {
     // Fetch dog details including comments
-    const fetchDogDetails = async () => {
-      try {
-        const [dogResponse, commentsResponse] = await Promise.all([
-          api.get(`/api/v1/dogs/${id}`),
-          api.get(`/api/v1/dogs/${id}/comment`) // Assuming endpoint for fetching comments
-        ]);
-
-        setDog(dogResponse.data);
-        setLoading(false);
-
-        // Fetch usernames for each comment
-        const commentPromises = commentsResponse.data.map((comment: any) =>
-          api.get(`/api/v1/users/${comment.userid}`)
-        );
-
-        const usernames = await Promise.all(commentPromises);
-        const updatedComments = commentsResponse.data.map((comment: any, index: number) => ({
-          ...comment,
-          username: usernames[index].data.username
-        }));
-
-        setComments(updatedComments);
-      } catch (error) {
-        console.error('Error fetching dog details:', error);
-      }
-    };
+   
 
     fetchDogDetails();
   }, [id]);
@@ -75,7 +77,7 @@ const DogDetail: React.FC = () => {
         (response) => {
 
           window.alert("success")
-          window.location.reload();
+          fetchDogDetails();
 
         })
         .catch((error) => {

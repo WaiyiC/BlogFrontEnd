@@ -48,10 +48,10 @@ const ManageDog: React.FC = () => {
   };
 
   const handleAddDog = async (values: DogT) => {
-    const { name, breed, age, description, imageFilename } = values;
+    const { name, breed, age, description, image } = values;
 
     console.log(token);
-  addDog(name, breed, age, description,imageFilename).then(
+  addDog(name, breed, age, description,image).then(
       (response) => {
 
         window.alert("success")
@@ -67,13 +67,16 @@ const ManageDog: React.FC = () => {
     );
   };
 
+
+
+  
   const handleUpdateDog = async (values: any) => {
-    const {name, breed, age, description, image } = values; // Destructure values to get id
+    const { id, name, breed, age, description, image } = values;
     try {
-      await editDog({ name, breed, age, description, image }); // Call editDog with id and updated fields
+      await editDog(id,  name, breed, age, description, image );
       message.success('Dog updated successfully');
-      fetchDogs(); // Refresh the dog list after successful update
-      setIsModalVisible(false); // Close the modal after update
+      fetchDogs();
+      setIsModalVisible(false);
     } catch (error) {
       console.error('Error updating dog:', error);
       message.error('Failed to update dog');
@@ -93,6 +96,12 @@ const ManageDog: React.FC = () => {
     }
   };
 
+
+    const onFinish = (values: any) => {
+      console.log('Received values:', values);
+      handleUpdateDog(values);
+    };
+  
   const showModal = (dog: any = null) => {
     setCurrentDog(dog);
     setIsEditing(!!dog);
@@ -151,9 +160,14 @@ const ManageDog: React.FC = () => {
         footer={null}
       >
         <Form
-          onFinish={isEditing ? handleUpdateDog : handleAddDog}
+          onFinish={onFinish}
           initialValues={currentDog}
         >
+         
+            <Form.Item name="id">
+              <Input type="hidden" />
+            </Form.Item>
+           
           <Form.Item
             name="name"
             label="Name"

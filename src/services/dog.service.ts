@@ -41,9 +41,11 @@ export const addDog = async (name: string, breed: string, age: number, descripti
   }
 };
 
-export const editDog = async ({ id, name, breed, age, description, image }: any) => {
+export const editDog = async (id:number ,name: string, breed: string, age: number, description: string, image: string) => {
+  
+console.log(id,name, breed, age, description, image);
   try {
-    const response = await axios.put(`/dogs/${id}`, { name, breed, age, description, image });
+    const response = await api.put(`/dogs/${id}`, { name, breed, age, description, image},{ headers: authHeader() });
     return response.data;
   } catch (error) {
     throw new Error(`Error editing dog: ${error.message}`);
@@ -52,9 +54,7 @@ export const editDog = async ({ id, name, breed, age, description, image }: any)
 
 export const deleteDog = async (id: number) => {
   try {
-    // Fetch the dog by its ID first
-   
-    // Now perform the delete operation
+  
     const response = await api.delete(`/dogs/${id}`, {
       headers: authHeader()
     });
@@ -124,7 +124,7 @@ export const dislikeDogs = async (id: number) => {
 export const commentDogs = async (id: number, userid: number, messagetxt: string) => {
   try {
     console.log(id, userid, messagetxt);
-    const response = await api.post(`/${id}/comment`, { userid,messagetxt }, { headers: authHeader() });
+    const response = await api.post(`/dogs/${id}/comment`, { userid,messagetxt }, { headers: authHeader() });
     return response.data; // Assuming server responds with a meaningful success message or data
   } catch (error) {
     if (axios.isAxiosError(error)) {
